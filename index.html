@@ -219,6 +219,60 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-05-12T16:28:30.000Z"><a href="/2016/05/13/有一种安全漏洞叫cookie劫持/">2016-05-13</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/05/13/有一种安全漏洞叫cookie劫持/">有一种安全漏洞叫cookie劫持</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>最近做项目有使用到cookie存储用户数据，虽然数据被加密过，但仍然心里挺没底，而导致这种心里状态的出现，说到底还是自己对cookie的认识不够，利用这个周未，深入了解一下。</p>
+<p>Cookie是在远程浏览器端存储数据并以此跟踪或识别用户的机制，从实现上说，Cookie是在客户端上的一小段数据。<br>由于Cookie的安全问题，通常都知道，Cookie都保存一些不敏感的数据，但仅此而已的话，又没法满足市场需求，比如类似，SSO单点登陆，记住密码，防止刷票，甚至用户登陆的应用案例比比皆是，这就涉及到安全问题？</p>
+<p>也许有的人会说可以使用Cookie的兄弟session来代替安全问题，那么Session真的就是安全吗？<br>Session通过一个称为PHPSESSID的Cookie和服务器联系，Session是通过这个唯一的sessionId来判断识别不同用户端，即session文件的文件名，再说的简单一点就是通过cookie中存的sessionid去获取服务端中的session数据，即sessionid是唯一对应session数据的钥匙，没有它，关有session也白搭。说到这里也许有人些会讲，说session可能不通过cookie传值，但我想表达的它的工作原理还是没有变。</p>
+<p>也有就是我们只要通过一种方法得到了那个cookie或者说那个key就能很多的非法操作，甚至有可能伪造用户登陆，比如上面的记住密码，我完全可以把这段加密的cookie放到我的浏览器运行起来，起到登陆作用，再比如session，我也可以把sessionid放到我的浏览器中获取用户session数据，而这种方式我暂且称它为cookie劫持。</p>
+<p>举个通过劫挂而获取session数据的实例吧<br>创建index.php，代码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="preprocessor">&lt;?php</span></span><br><span class="line">session_start();</span><br><span class="line"><span class="variable">$_SESSION</span>[<span class="string">'views'</span>]=<span class="number">1</span>;</span><br><span class="line">var_dump(<span class="variable">$_SESSION</span>);</span></span><br></pre></td></tr></table></figure></p>
+<p>另一个获取session文件get.php，代码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="preprocessor">&lt;?php</span></span><br><span class="line">session_start();</span><br><span class="line">var_dump(<span class="variable">$_SESSION</span>);</span></span><br></pre></td></tr></table></figure></p>
+<p>第一个文件index.php，用chrome运行文件，即显示如下图一显示，第二个文件get.php，用firefox运行文件，即显示获取session为空，如下图二显示，两个不同浏览器相当于两个不同的用户或者说客户端，所以从这两个图产生的sessionid也可以看出，但是注意看，我把chrome中的sessionid复制替换firefox中的sessionid的值，然后再刷新firefox，奇迹就发生了，居然获取到了chrome中的session数据，即views=1，如图三中显示。那如果我们这里不是演示，而是登陆状态呢？那它就悲剧了不是？而劫持cookie手段又是如此之简单，比如抓包工具fiddler，代理，路由器，XSS等等。</p>
+<p><img src="/img/posts/20160513_1.png" alt="图一" title="图一"><br><img src="/img/posts/20160513_2.png" alt="图二" title="图二"><br><img src="/img/posts/20160513_3.png" alt="图三" title="图三"></p>
+<p>那么怎样防止cookie或者sessionid被劫持，或者说篡改呢？首先我会想到的就是验证，通过客户端的一些唯一参数得出来的token来验证，比如浏览器的UA,版本号，操作系统，IP等等通过算法最后算出唯一的token。而这种方法其实也并不是防，而是你劫持了一样没有用。</p>
+<p>说到上面的唯一性，让我想到了指纹，而浏览有没有指纹呢？  哈哈，真的是只有想不到的，事实上是有的，请度娘或<a href="http://www.freebuf.com/news/40745.html" target="_blank" rel="external">戳这里</a>，有了它你还会怕被劫持吗？</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-04-25T17:07:02.000Z"><a href="/2016/04/26/退学那点事/">2016-04-26</a></time>
       
       
@@ -492,6 +546,8 @@
   
     <li><a href="/categories/drupal/">drupal</a><small>3</small></li>
   
+    <li><a href="/categories/php/">php</a><small>1</small></li>
+  
     <li><a href="/categories/杂烩/">杂烩</a><small>2</small></li>
   
   </ul>
@@ -503,9 +559,15 @@
   <h3 class="title">标签</h3>
   <ul class="entry">
   
+    <li><a href="/tags/cookie/">cookie</a><small>1</small></li>
+  
     <li><a href="/tags/drupal/">drupal</a><small>3</small></li>
   
+    <li><a href="/tags/session/">session</a><small>1</small></li>
+  
     <li><a href="/tags/ueditor/">ueditor</a><small>1</small></li>
+  
+    <li><a href="/tags/劫持/">劫持</a><small>1</small></li>
   
     <li><a href="/tags/自我认识/">自我认识</a><small>1</small></li>
   
